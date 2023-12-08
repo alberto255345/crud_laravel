@@ -2,19 +2,18 @@
 Just a basic boilerplate to start directly coding on React, Laravel, MySQL and PhpMyAdmin with Docker Compose.
 
 ## Frontend
-- NodeJS 13.10.1 Alpine
-- React 16.13.0
-- Webpack 4
+- NodeJS 20.9.0 Alpine
+- React 18.2.0
+- eslint 8.53
 
 ## Backend
-- PHP 7.4 FPM Alpine
-- Laravel 8
-- Composer 1.10
-- NodeJS 14.17.0 Alpine
+- PHP 8.2 FPM Alpine
+- Laravel 10
+- Composer 2.5.8
 
 ## MySQL and PhpMyAdmin
 
-MySQL Version: 5.7.x
+MySQL Version: 8.2
 
 ## Using the Project
 
