@@ -11,9 +11,11 @@ Just a basic boilerplate to start directly coding on React, Laravel, MySQL and P
 - Laravel 10
 - Composer 2.5.8
 
-## MySQL and PhpMyAdmin
+## MySQL and Docker
 
 MySQL Version: 8.2
+Docker Version: 24.0.7
+Docker Compose version v2.21.0
 
 ## Using the Project
 
