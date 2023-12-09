@@ -1,5 +1,5 @@
 # Crud Laravel com Frontend em React - React, Laravel, MySQL, Docker
-Just a basic boilerplate to start directly coding on React, Laravel, MySQL and PhpMyAdmin with Docker Compose.
+Just a basic boilerplate to start directly coding on React, Laravel, MySQL and Docker Compose.
 
 ## Frontend
 - NodeJS 20.9.0 Alpine
@@ -15,7 +15,7 @@ Just a basic boilerplate to start directly coding on React, Laravel, MySQL and P
 
 MySQL Version: 8.2
 Docker Version: 24.0.7
-Docker Compose version v2.21.0
+Docker Compose Version: 2.21.0
 
 ## Using the Project
 

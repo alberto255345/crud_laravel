@@ -20,3 +20,4 @@ Route::get('/', function(){
 })->name('index');
 
 Route::get('/usuarios', 'UsuariosController@index')->name('index.usuarios');
+Route::post('/usuarios', 'UsuariosController@store')->name('store.usuarios');

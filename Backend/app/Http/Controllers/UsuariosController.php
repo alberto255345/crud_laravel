@@ -28,11 +28,14 @@ class UsuariosController extends Controller
     {
         $request->validate([
             'nome' => 'required',
-            'cpf' => 'required|CPF|unique:usuarios',
+            'cpf' => 'required|cpf|unique:usuarios',
             // Adicione outras regras de validação conforme necessário
         ]);
 
-        $usuario = Usuarios::create($request->all());
+        $usuario = Usuarios::create([
+            'NOME' => $request->nome,
+            'CPF' => $request->cpf,
+        ]);
 
         return response()->json($usuario, 201);
     }

@@ -1,0 +1,44 @@
+version: '3.7'
+services:
+
+    frontend:
+      build:
+        context: ./Frontend 
+      ports:
+        - "80:80"
+      networks:
+        - app-network
+
+    backend:
+      build:
+        context: ./Backend
+      restart: unless-stopped
+      environment:
+        MYSQL_DATABASE: ${DB_DATABASE}
+        MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+        MYSQL_PASSWORD: ${DB_PASSWORD}
+        MYSQL_USER: ${DB_USERNAME}
+      working_dir: /var/www
+      volumes:
+        - ./Backend:/var/www
+      ports:
+        - "8000:8000"
+      networks:
+        - app-network
+
+    appdb:
+      image: mysql:8.2
+      restart: unless-stopped
+      environment:
+        MYSQL_DATABASE: ${DB_DATABASE}
+        MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+        MYSQL_PASSWORD: ${DB_PASSWORD}
+        MYSQL_USER: ${DB_USERNAME}
+      ports:
+        - 3306:3306
+      networks:
+        - app-network
+
+networks:
+  app-network:
+    driver: bridge
