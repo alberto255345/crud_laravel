@@ -21,3 +21,4 @@ Route::get('/', function(){
 
 Route::get('/usuarios', 'UsuariosController@index')->name('index.usuarios');
 Route::post('/usuarios', 'UsuariosController@store')->name('store.usuarios');
+Route::get('/pais', 'PaisController@index')->name('index.pais');

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faCheck, faEdit, faPlus, faMinus  } from "@fortawesome/free-solid-svg-icons";
+import SelectView from './components/selectview.jsx';
 import axios from 'axios';
 
 const App = () => {
@@ -125,6 +126,46 @@ const App = () => {
   return (
     <div className='todo-app'>
       <form className="input-section" onSubmit={handleSubmit}>
+        <div>
+            <button 
+              id="addNumb" 
+              type="number" 
+              onClick={() => {
+                incrementInputs();
+                handleButtonClick('addNumb');
+              }}
+              className="add">
+                Incrementar Telefone
+            </button>
+            <button
+              id="removeNumb"
+              type="button"
+              onClick={() => {
+                decrementInputs();
+                handleButtonClick('removeNumb');
+              }}
+              className="add"
+            >
+              Decrementar Telefone
+            </button>
+            <button
+              id="addBtn"
+              type="submit"
+              onClick={() => handleButtonClick('addBtn')}
+              className="add"
+            >
+              Cadastrar
+            </button>
+            <button
+              type="button"
+              className="add"
+              id="update-button"
+              style={{ display: "none"}}
+            >
+              Update
+            </button>
+        </div>
+
         <div className="input-grid">
         <input
           id="todoInputNome"
@@ -133,7 +174,7 @@ const App = () => {
           placeholder="Nome..."
           value={formValues.nome}
           onChange={handleInputChange}
-        />
+          />
         <input
           id="todoInputCpf"
           type="text"
@@ -141,55 +182,22 @@ const App = () => {
           placeholder="CPF..."
           value={formValues.cpf}
           onChange={handleInputChange}
-        />
+          />
           {formValues.telefoneinput.map((value, index) => (
-            <input
-              key={index}
-              type="text"
-              name={`telefoneinput[${index}]`}
-              placeholder={`Telefone ${index + 1}...`}
-              value={value}
-              onChange={(e) => handleTelefoneChange(index, e.target.value)}
-            />
+            <div key={index} className='conjun'>
+              <SelectView chave={index} name={`ddiinput[${index}]`} />
+              <input
+                key={index}
+                type="text"
+                name={`telefoneinput[${index}]`}
+                placeholder={`Telefone ${index + 1}...`}
+                value={value}
+                className='cnormal'
+                onChange={(e) => handleTelefoneChange(index, e.target.value)}
+              />
+            </div>
           ))}
         </div>
-        <button 
-          id="addNumb" 
-          type="number" 
-          onClick={() => {
-            incrementInputs();
-            handleButtonClick('addNumb');
-          }}
-          className="add">
-            Incrementar Telefone
-        </button>
-        <button
-          id="removeNumb"
-          type="button"
-          onClick={() => {
-            decrementInputs();
-            handleButtonClick('removeNumb');
-          }}
-          className="add"
-        >
-          Decrementar Telefone
-        </button>
-        <button
-          id="addBtn"
-          type="submit"
-          onClick={() => handleButtonClick('addBtn')}
-          className="add"
-        >
-          Cadastrar
-        </button>
-        <button
-          type="button"
-          className="add"
-          id="update-button"
-          style={{ display: "none"}}
-        >
-          Update
-        </button>
       </form>
       <div className="todos">
         <ul className="todo-list">

@@ -60,7 +60,6 @@ class PaisesTableSeeder extends Seeder
             ['NOME_PAIS' => 'Jamaica', 'NUMERO_PAIS' => '+1876', 'CONTINENTE' => 'América'],
             ['NOME_PAIS' => 'Camarões', 'NUMERO_PAIS' => '+1664', 'CONTINENTE' => 'América'],
             ['NOME_PAIS' => 'Martinica', 'NUMERO_PAIS' => '+1664', 'CONTINENTE' => 'América'],
-            ['NOME_PAIS' => 'Trinidad e Tobago', 'NUMERO_PAIS' => '+1868', 'CONTINENTE' => 'América'],
             ['NOME_PAIS' => 'Puerto Rico', 'NUMERO_PAIS' => '+1939', 'CONTINENTE' => 'América'],
             ['NOME_PAIS' => 'Bahamas', 'NUMERO_PAIS' => '+1242', 'CONTINENTE' => 'América'],
             ['NOME_PAIS' => 'Aruba', 'NUMERO_PAIS' => '+297', 'CONTINENTE' => 'América'],
