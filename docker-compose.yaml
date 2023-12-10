@@ -5,12 +5,15 @@ services:
       build:
         context: ./Frontend 
       ports:
-        - "80:80"
+        - "80:5173"
       networks:
         - app-network
 
     backend:
       build:
+        args:
+          user: app
+          uid: 1000
         context: ./Backend
       restart: unless-stopped
       environment:

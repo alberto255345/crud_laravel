@@ -9,7 +9,7 @@ class UsuariosController extends Controller
 {
     public function index()
     {
-        $usuarios = Usuarios::all();
+        $usuarios = Usuarios::leftjoin('telefones', 'usuarios.ID', '=', 'telefones.USUARIO_ID')->select('usuarios.*', 'telefones.TELEFONE')->get();
         return response()->json($usuarios);
     }
 

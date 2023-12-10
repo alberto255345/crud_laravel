@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faCheck, faEdit, faPlus, faMinus  } from "@fortawesome/free-solid-svg-icons";
+import { format, parseISO } from 'date-fns';
 import SelectView from './components/selectview.jsx';
 import axios from 'axios';
 
@@ -16,8 +17,24 @@ const App = () => {
   });
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/usuarios');
+        setTodos(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar dados dos países:', error);
+      }
+    };
+
+    fetchData();
+  }, []); // Este useEffect será chamado sempre que o estado 'todo' mudar
+
+  // UseEffect para buscar dados adicionais quando o estado 'todos' muda
+  useEffect(() => {
     console.log('O estado todo mudou:', todos);
-  }, [todos]); // Este useEffect será chamado sempre que o estado 'todo' mudar
+    // Faça qualquer outra coisa que você precise fazer quando 'todos' mudar
+  }, [todos]); // Este useEffect será chamado apenas quando 'todos' mudar
+
 
   // Função para incrementar a quantidade de inputs
   const incrementInputs = () => {
@@ -58,41 +75,6 @@ const App = () => {
   const handleButtonClick = (buttonId) => {
     setSubmitButton(buttonId);
   };
-
-  // Função para renderizar os inputs com base em shownumeros
-  const renderInputs = () => {
-    const inputs = [];
-
-    for (let i = 0; i < shownumeros; i++) {
-      inputs.push(<input key={i} name={`telefoneinput[${i}]`} id={`telefoneinput[${i}]`} type="text" placeholder={`Telefone ${i + 1}`} />);
-    }
-
-    return inputs;
-  };
-
-  const handleAddTodo = async () => {
-    const newTodo = {
-      text: 'Novo Todo',
-    };
-
-    try {
-      console.log('Entrou no Try');
-      const response = await axios.get('http://localhost:8000/usuarios');
-
-      console.log(response.data);
-      setTodos([...todos, response.data]);
-    } catch (error) {
-      console.error('Erro ao adicionar todo:', error);
-    }
-  };
-
-
-
-  const handleToggleDetails = (id) => {
-    // Implemente a lógica para alternar a visibilidade dos detalhes do todo
-  };
-
-  const nodeRef = React.useRef(null);
   
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -115,6 +97,14 @@ const App = () => {
         }
       });
 
+      if (response.data && response.data.errors) {
+        const errorMessage = response.data.errors.cpf[0] || 'Erro desconhecido';
+        setErrorPopup(errorMessage);
+      }
+
+      // Atualize o estado 'todos' com os dados recebidos da API
+      setTodos((prevTodos) => [...prevTodos, response.data]);
+
       // Lógica adicional se necessário
       console.log('Resposta da API:', response.data);
     } catch (error) {
@@ -126,7 +116,7 @@ const App = () => {
   return (
     <div className='todo-app'>
       <form className="input-section" onSubmit={handleSubmit}>
-        <div>
+        <div className="input-grid">
             <button 
               id="addNumb" 
               type="number" 
@@ -201,14 +191,17 @@ const App = () => {
       </form>
       <div className="todos">
         <ul className="todo-list">
-          <li className="li">
-            <input className="form-check-input" type="checkbox" value="option1"/>
-            <label className="form-check-label" htmlFor="inlineCheckbox1"></label>
-            <span className="todo-text">text</span>
-            <span className="todo-text">date</span>
-            <span className="span-button"><FontAwesomeIcon icon={faTrash} /></span>
-            <span className="span-button"><FontAwesomeIcon icon={faEdit} /></span>
-          </li>
+          {todos.map(({NOME, CPF, created_at}, index) => (  
+            <li className="li" key={index}> 
+              <input className="form-check-input" type="checkbox" value="option1"/>
+              <label className="form-check-label" htmlFor="inlineCheckbox1"></label>
+              <span className="todo-text">{NOME}</span>
+              <span className="todo-text">{CPF}</span>
+              <span className="todo-text">Data de Criação: {format(parseISO(created_at), 'dd/MM/yyyy HH:mm')}</span>
+              <span className="span-button"><FontAwesomeIcon icon={faTrash} /></span>
+              <span className="span-button"><FontAwesomeIcon icon={faEdit} /></span>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
