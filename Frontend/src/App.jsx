@@ -29,15 +29,11 @@ const App = () => {
     fetchData();
   }, []); 
 
-  const definecruds = (cruds) => {
-    setcruds(cruds);
-  }
-
   return (
     <div className='crud-app'>
       <CrudForm
         cruds={cruds}
-        setCruds={definecruds}
+        setCruds={setcruds}
         shownumeros={shownumeros}
         setShownumeros={setShownumeros}
         editItemId={editItemId}
@@ -54,6 +50,7 @@ const App = () => {
         formValues={formValues}
         setFormValues={setFormValues}
         setShownumeros={setShownumeros}
+        toast={toast}
       />
 
       <ToastContainer

@@ -4,7 +4,7 @@ import { format, parseISO } from 'date-fns';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 
-const CrudList = ({ cruds, setcruds, editItemId, setEditItemId, formValues, setFormValues, setShownumeros  }) => {
+const CrudList = ({ cruds, setcruds, editItemId, setEditItemId, formValues, setFormValues, setShownumeros, toast }) => {
     // Este useEffect será chamado apenas quando 'cruds' mudar
     useEffect(() => {
     }, [cruds]); 
