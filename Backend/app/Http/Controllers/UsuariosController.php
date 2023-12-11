@@ -20,17 +20,6 @@ class UsuariosController extends Controller
         return response()->json($usuarios);
     }
 
-    public function show($id)
-    {
-        $usuario = Usuarios::find($id);
-
-        if (!$usuario) {
-            return response()->json(['message' => 'Usuário não encontrado'], 404);
-        }
-
-        return response()->json($usuario);
-    }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -66,24 +55,6 @@ class UsuariosController extends Controller
         ->first();
 
         return response()->json($usuario, 201);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nome' => 'required',
-            'cpf' => 'required|CPF|unique:usuarios,'.$id,
-        ]);
-
-        $usuario = Usuarios::find($id);
-
-        if (!$usuario) {
-            return response()->json(['message' => 'Usuário não encontrado'], 404);
-        }
-
-        $usuario->update($request->all());
-
-        return response()->json($usuario);
     }
 
     public function destroy($id)

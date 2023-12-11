@@ -7,7 +7,7 @@ Just a basic boilerplate to start directly coding on React, Laravel, MySQL and D
 - eslint 8.53
 
 ## Backend
-- PHP 8.2 FPM Alpine
+- PHP 8.2 FPM
 - Laravel 10
 - Composer 2.5.8
 
@@ -22,14 +22,8 @@ Docker Compose Version: 2.21.0
 Execute the following command and the Docker will build and run the containers;
 
 ```
-docker-compose up --build
+docker-compose up -d --build
 ```
 
-### To-Do
+### CRUD
 
-1. Webpack and Babel configuration for Frontend & Updating the versions of the dependencies in Frontend
-2. Creating some examples in Backend & Frontend, example request & response.
-
-### Contribution
-
-Feel free to contribute this project.
