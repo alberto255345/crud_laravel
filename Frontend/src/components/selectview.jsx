@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-function SelectView({ chave, name, handleDDIChange }) {
+function SelectView({ chave, name, handleDDIChange, select }) {
   const [paises, setPaises] = useState([]);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ function SelectView({ chave, name, handleDDIChange }) {
 
   return (
     <>
-      <select name={name} onChange={handleChange}>
+      <select name={name} value={select} onChange={handleChange}>
         {paises.map(pais => (
           <option key={pais.ID} value={pais.ID}>
             {pais.NOME_PAIS}

@@ -4,12 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Usuarios;
+use Illuminate\Support\Facades\DB;
 
 class UsuariosController extends Controller
 {
     public function index()
     {
-        $usuarios = Usuarios::leftjoin('telefones', 'usuarios.ID', '=', 'telefones.USUARIO_ID')->select('usuarios.*', 'telefones.TELEFONE')->get();
+        $usuarios = DB::table('usuarios')
+        ->leftJoin('telefones', 'usuarios.ID', '=', 'telefones.USUARIO_ID')
+        ->leftJoin('pais', 'pais.ID', '=', 'telefones.COUNTRY_CODE')
+        ->select('usuarios.ID', 'usuarios.NOME', 'usuarios.CPF', DB::raw('GROUP_CONCAT(CONCAT(pais.NUMERO_PAIS, " ", telefones.TELEFONE)) as TELEFONE'), 'usuarios.created_at')
+        ->groupBy('usuarios.ID', 'usuarios.NOME', 'usuarios.CPF')
+        ->get();
+
         return response()->json($usuarios);
     }
 
@@ -50,6 +57,13 @@ class UsuariosController extends Controller
                 ]);
             }
         }
+
+        $usuario = Usuarios::leftJoin('telefones', 'usuarios.ID', '=', 'telefones.USUARIO_ID')
+        ->leftJoin('pais', 'pais.ID', '=', 'telefones.COUNTRY_CODE')
+        ->select('usuarios.ID', 'usuarios.NOME', 'usuarios.CPF', DB::raw('GROUP_CONCAT(CONCAT(pais.NUMERO_PAIS, " ", telefones.TELEFONE)) as TELEFONE'), 'usuarios.created_at')
+        ->groupBy('usuarios.ID', 'usuarios.NOME', 'usuarios.CPF')
+        ->where('usuarios.ID', $usuario->ID)
+        ->first();
 
         return response()->json($usuario, 201);
     }

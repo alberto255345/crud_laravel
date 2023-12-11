@@ -34,13 +34,11 @@ const App = () => {
     };
 
     fetchData();
-  }, []); // Este useEffect será chamado sempre que o estado 'cruds' mudar
+  }, []); 
 
-  // UseEffect para buscar dados adicionais quando o estado 'cruds' muda
+  // Este useEffect será chamado apenas quando 'cruds' mudar
   useEffect(() => {
-    console.log('O estado cruds mudou:', cruds);
-    // Faça qualquer outra coisa que você precise fazer quando 'cruds' mudar
-  }, [cruds]); // Este useEffect será chamado apenas quando 'cruds' mudar
+  }, [cruds]); 
 
 
   // Função para incrementar a quantidade de inputs
@@ -102,7 +100,7 @@ const App = () => {
         return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
       } else {
         // Retornar o número original caso não tenha 10 ou 11 dígitos
-        return phoneNumber;
+        return digits;
       }
     } catch (error) {
       console.error('Erro ao formatar o número de telefone:', error);
@@ -125,7 +123,6 @@ const App = () => {
   // Função para preencher os campos do formulário ao editar
   const handleEdit = async (id) => {
     const itemToEdit = cruds.find((item) => item.ID === id);
-    console.log(itemToEdit);
     // se o item não for encontrado, retorna
     if (!itemToEdit) {
       return;
@@ -148,7 +145,6 @@ const App = () => {
       ddiinput: ddiinputArray,
     });
     setEditItemId(id);
-    handleButtonClick('update-button'); // Mostra o botão de atualização
   };
 
   const handleTelefoneChange = (index, value) => {
@@ -195,8 +191,28 @@ const App = () => {
     event.preventDefault();
 
     // Verifica se submitButton é igual a addBtn, se for igual continue se não for encerre
-    if (submitButton !== 'addBtn') {
+    if (submitButton !== 'addBtn' && submitButton !== 'uptBtn') {
       return;
+    }
+
+    // se sumbitButton for igual a uptBtn, irá deletar os dados
+    if (submitButton === 'uptBtn') {
+      try {
+        const response_delete = await axios.delete(`http://localhost:8000/usuarios/${editItemId}`);
+        setcruds((prevcruds) => prevcruds.filter(crud => crud.ID !== editItemId));
+      } catch (error) {
+        console.error('Erro ao deletar', error);
+        toast.error('Erro ao atualizar o item.', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          });
+      }
     }
 
     // verifica se os campos estão vazios
@@ -215,10 +231,7 @@ const App = () => {
     }
 
     // Se o CPF for válido, pode prosseguir com o envio do formulário
-    if (cpfValido) {
-      // Seu código de envio do formulário aqui
-      console.log('Formulário enviado!');
-    } else {
+    if (!cpfValido) {
       // Exibir toast de erro se o CPF for inválido
       toast.warn('CPF inválido. Por favor, corrija o CPF.', {
         position: "top-right",
@@ -272,8 +285,17 @@ const App = () => {
         ddiinput: ['']
       });
 
-      // Lógica adicional se necessário
-      console.log('Resposta da API:', response.data);
+      const mensagem = editItemId ? 'Item atualizado com sucesso!' : 'Item adicionado com sucesso!';
+      toast.success(mensagem, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
     } catch (error) {
       // Lógica de tratamento de erro
       console.error('Erro ao enviar requisição:', error);
@@ -287,7 +309,16 @@ const App = () => {
       setcruds((prevcruds) => prevcruds.filter(crud => crud.ID !== id));
 
       // Lógica adicional se necessário
-      console.log('Item excluído com sucesso:', response.data);
+      toast.warn('Item excluído com sucesso.', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
     } catch (error) {
       // Lógica de tratamento de erro
       console.error('Erro ao deletar item:', error);
@@ -375,10 +406,12 @@ const App = () => {
             fontSize: '12px',
           }}>CPF inválido. Por favor, corrija o CPF.</span>}
         </div>
+        {editItemId && <input type="hidden" name="id" value={editItemId} />}
           {formValues.telefoneinput.map((value, index) => (
             <div key={index} className='conjun'>
               <SelectView 
                 chave={index} 
+                select={formValues.ddiinput[index]}
                 name={`ddiinput[${index}]`} 
                 handleDDIChange={(novoDDI) => handleDDIChange(index, novoDDI)}
               />
@@ -397,13 +430,13 @@ const App = () => {
       </form>
       <div className="cruds">
         <ul className="crud-list">
-          {cruds.map(({NOME, CPF, created_at, ID}, index) => (  
+          {cruds.map(({NOME, CPF, created_at, ID, TELEFONE}, index) => (  
             <li className="li" key={index}> 
-              <span className="crud-text">{NOME}</span>
+              <span className="crud-text" style={{width: '15%'}}>{NOME}</span>
               <span className="crud-text">{CPF}</span>
-              <span className='crud-text'></span>
+              <span className='crud-text'>{TELEFONE}</span>
               <span className="crud-text">Data de Criação: {format(parseISO(created_at), 'dd/MM/yyyy HH:mm')}</span>
-              <span className="span-button" onClick={() => handleDelete(ID)}><FontAwesomeIcon icon={faTrash} /></span>
+              {editItemId != ID ?  <span className="span-button" onClick={() => handleDelete(ID)}><FontAwesomeIcon icon={faTrash} /></span> : ''}
               <span className="span-button" onClick={() => handleEdit(ID)}><FontAwesomeIcon icon={faEdit} /></span>
             </li>
           ))}
