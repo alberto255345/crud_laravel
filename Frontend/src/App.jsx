@@ -10,7 +10,7 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
-  const [todos, setTodos] = useState([]);
+  const [cruds, setcruds] = useState([]);
   const [shownumeros, setShownumeros] = useState(1);
   const [submitButton, setSubmitButton] = useState(null);
   const [cpfValido, setCpfValido] = useState(true);
@@ -27,20 +27,20 @@ const App = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:8000/usuarios');
-        setTodos(response.data);
+        setcruds(response.data);
       } catch (error) {
         console.error('Erro ao buscar dados dos países:', error);
       }
     };
 
     fetchData();
-  }, []); // Este useEffect será chamado sempre que o estado 'todo' mudar
+  }, []); // Este useEffect será chamado sempre que o estado 'cruds' mudar
 
-  // UseEffect para buscar dados adicionais quando o estado 'todos' muda
+  // UseEffect para buscar dados adicionais quando o estado 'cruds' muda
   useEffect(() => {
-    console.log('O estado todo mudou:', todos);
-    // Faça qualquer outra coisa que você precise fazer quando 'todos' mudar
-  }, [todos]); // Este useEffect será chamado apenas quando 'todos' mudar
+    console.log('O estado cruds mudou:', cruds);
+    // Faça qualquer outra coisa que você precise fazer quando 'cruds' mudar
+  }, [cruds]); // Este useEffect será chamado apenas quando 'cruds' mudar
 
 
   // Função para incrementar a quantidade de inputs
@@ -67,17 +67,47 @@ const App = () => {
 
   const handleInputChange = (event) => {
     if(event.target.name === 'cpf'){
+      // Remove qualquer caractere não numérico
+      const numeroApenas = event.target.value.replace(/\D/g, '');
+      event.target.value = numeroApenas;
       // Validar o CPF e atualizar o estado cpfValido
-      const valido = cpf.isValid(event.target.value);
+      const valido = cpf.isValid(numeroApenas);
       setCpfValido(valido);
       if(valido){
-        event.target.value = cpf.format(event.target.value);
+        event.target.value = cpf.format(numeroApenas);
       }
     }
     setFormValues({
       ...formValues,
       [event.target.name]: event.target.value
     });
+  };
+
+  // Função para formatar o número de telefone com tratamento de erro
+  const formatarTelefone = (numero) => {
+    try {
+      if (!numero) {
+        return ''; // Retorna uma string vazia se o número estiver vazio
+      }
+
+      // Remover qualquer caractere não numérico
+      const digits = numero.replace(/\D/g, '');
+
+      // Verificar a quantidade de dígitos para aplicar a formatação correta
+      if (digits.length === 11) {
+        // Formatar número com 11 dígitos (e.g., telefone móvel com 9 dígitos)
+        return `(${digits.slice(0, 2)}) ${digits[2]} ${digits.slice(3, 7)}-${digits.slice(7)}`;
+      } else if (digits.length === 10) {
+        // Formatar número com 10 dígitos (e.g., telefone fixo sem o 9 inicial)
+        return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+      } else {
+        // Retornar o número original caso não tenha 10 ou 11 dígitos
+        return phoneNumber;
+      }
+    } catch (error) {
+      console.error('Erro ao formatar o número de telefone:', error);
+      return numero; // Retorna o número original em caso de erro
+    }
   };
 
   // Função para cancelar a edição
@@ -94,7 +124,7 @@ const App = () => {
 
   // Função para preencher os campos do formulário ao editar
   const handleEdit = async (id) => {
-    const itemToEdit = todos.find((item) => item.ID === id);
+    const itemToEdit = cruds.find((item) => item.ID === id);
     console.log(itemToEdit);
     // se o item não for encontrado, retorna
     if (!itemToEdit) {
@@ -122,6 +152,14 @@ const App = () => {
   };
 
   const handleTelefoneChange = (index, value) => {
+    // Remove qualquer caractere não numérico
+    const numeroApenas = value.replace(/\D/g, '');
+    // Validar o telefone se ele tem 8 ou 9 digitos, se tiver mais deleta o ultimo digito
+    if (numeroApenas.length > 11) {
+      value = numeroApenas.slice(0, -1);
+    }
+    value = formatarTelefone(value);
+
     const newTelefoneInput = [...formValues.telefoneinput];
     newTelefoneInput[index] = value;
 
@@ -223,8 +261,8 @@ const App = () => {
         setErrorPopup(errorMessage);
       }
 
-      // Atualize o estado 'todos' com os dados recebidos da API
-      setTodos((prevTodos) => [...prevTodos, response.data]);
+      // Atualize o estado 'cruds' com os dados recebidos da API
+      setcruds((prevcruds) => [...prevcruds, response.data]);
 
       // Limpar os campos do formulário
       setFormValues({
@@ -246,7 +284,7 @@ const App = () => {
     try {
       const response = await axios.delete(`http://localhost:8000/usuarios/${id}`);
 
-      setTodos((prevTodos) => prevTodos.filter(todo => todo.ID !== id));
+      setcruds((prevcruds) => prevcruds.filter(crud => crud.ID !== id));
 
       // Lógica adicional se necessário
       console.log('Item excluído com sucesso:', response.data);
@@ -257,7 +295,7 @@ const App = () => {
   };
 
   return (
-    <div className='todo-app'>
+    <div className='crud-app'>
       <form className="input-section" onSubmit={handleSubmit}>
         <div className="input-grid">
             <button 
@@ -312,7 +350,7 @@ const App = () => {
 
         <div className="input-grid">
         <input
-          id="todoInputNome"
+          id="crudInputNome"
           type="text"
           name="nome"
           placeholder="Nome..."
@@ -321,7 +359,7 @@ const App = () => {
           />
         <div style={{position: 'relative'}}>
           <input
-            id="todoInputCpf"
+            id="crudInputCpf"
             type="text"
             name="cpf"
             placeholder="CPF..."
@@ -330,11 +368,11 @@ const App = () => {
             />
           {!cpfValido && <span style={{ 
             color: '#b10000',     
-            'z-index': '1',
+            zIndex: '1',
             position: 'absolute',
             top: '50px',
             left: '14px',
-            'font-size': '12px',
+            fontSize: '12px',
           }}>CPF inválido. Por favor, corrija o CPF.</span>}
         </div>
           {formValues.telefoneinput.map((value, index) => (
@@ -357,15 +395,14 @@ const App = () => {
           ))}
         </div>
       </form>
-      <div className="todos">
-        <ul className="todo-list">
-          {todos.map(({NOME, CPF, created_at, ID}, index) => (  
+      <div className="cruds">
+        <ul className="crud-list">
+          {cruds.map(({NOME, CPF, created_at, ID}, index) => (  
             <li className="li" key={index}> 
-              <input className="form-check-input" type="checkbox" value="option1"/>
-              <label className="form-check-label" htmlFor="inlineCheckbox1"></label>
-              <span className="todo-text">{NOME}</span>
-              <span className="todo-text">{CPF}</span>
-              <span className="todo-text">Data de Criação: {format(parseISO(created_at), 'dd/MM/yyyy HH:mm')}</span>
+              <span className="crud-text">{NOME}</span>
+              <span className="crud-text">{CPF}</span>
+              <span className='crud-text'></span>
+              <span className="crud-text">Data de Criação: {format(parseISO(created_at), 'dd/MM/yyyy HH:mm')}</span>
               <span className="span-button" onClick={() => handleDelete(ID)}><FontAwesomeIcon icon={faTrash} /></span>
               <span className="span-button" onClick={() => handleEdit(ID)}><FontAwesomeIcon icon={faEdit} /></span>
             </li>

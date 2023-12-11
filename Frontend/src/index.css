@@ -16,11 +16,26 @@ button {
 input::placeholder {
   font-family: Roboto, serif;
 }
-.todo-app {
-  width: 800px;
+.crud-app {
+  width: 180vh;
   height: 600px;
   border-radius: 15px;
   margin: 80px 0px;
+}
+@media (max-width: 1440px) {
+  .crud-app {
+    width: 165vh;
+  }
+}
+@media (max-width: 1024px) {
+  .crud-app {
+    width: 110vh;
+  }
+}
+@media (max-width: 768px) {
+  .crud-app {
+    width: 80vh;
+  }
 }
 .input-grid {
   display: grid;
@@ -39,6 +54,7 @@ input::placeholder {
   gap: 10px;
 }
 .input-section input[type="text"]:not(.cnormal) {
+  width: 90%;
   flex-grow: 1;
   padding: 16px;
   border: none;
@@ -120,7 +136,7 @@ input::placeholder {
   margin-right: 10px;
   margin-top: 10px;
 }
-.todos {
+.cruds {
   width: 100%;
   height: 500px;
   margin-top: 50px;
@@ -131,12 +147,12 @@ input::placeholder {
   -moz-box-shadow: 9px 21px 30px -19px rgba(0, 0, 0, 0.63);
   box-shadow: 9px 21px 30px -19px rgba(0, 0, 0, 0.63);
 }
-.todo-list {
+.crud-list {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
-.todo-list li {
+.crud-list li {
   display: flex;
   align-items: center;
   padding: 7px 30px;
@@ -145,7 +161,7 @@ input::placeholder {
   margin-bottom: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-.todo-list li span {
+.crud-list li span {
   margin-left: 10px;
   color: #fff;
   /* font-size: 13px */
@@ -158,7 +174,7 @@ input::placeholder {
   outline: none;
   background-color: #555;
 }
-.todo-text {
+.crud-text {
   color: #fff !important;
   margin-right: auto;
   font-size: 16px !important;
