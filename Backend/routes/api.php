@@ -21,4 +21,6 @@ Route::get('/', function(){
 
 Route::get('/usuarios', 'UsuariosController@index')->name('index.usuarios');
 Route::post('/usuarios', 'UsuariosController@store')->name('store.usuarios');
+Route::delete('/usuarios/{id}', 'UsuariosController@destroy')->name('destroy.usuarios');
 Route::get('/pais', 'PaisController@index')->name('index.pais');
+Route::get('/telefone/{id}', 'TelefonesController@show')->name('show.usuarios');

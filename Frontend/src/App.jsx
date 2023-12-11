@@ -3,17 +3,24 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faCheck, faEdit, faPlus, faMinus  } from "@fortawesome/free-solid-svg-icons";
 import { format, parseISO } from 'date-fns';
+import { cpf } from 'cpf-cnpj-validator';
+import { ToastContainer, toast } from 'react-toastify';
 import SelectView from './components/selectview.jsx';
 import axios from 'axios';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const [todos, setTodos] = useState([]);
   const [shownumeros, setShownumeros] = useState(1);
   const [submitButton, setSubmitButton] = useState(null);
+  const [cpfValido, setCpfValido] = useState(true);
+  // Estado para rastrear o ID do item em edição
+  const [editItemId, setEditItemId] = useState(null);
   const [formValues, setFormValues] = useState({
     nome: '',
     cpf: '',
-    telefoneinput: Array(shownumeros).fill('')
+    telefoneinput: Array(shownumeros).fill(''),
+    ddiinput: Array(shownumeros).fill(''),
   });
 
   useEffect(() => {
@@ -41,7 +48,8 @@ const App = () => {
     setShownumeros(shownumeros + 1);
     setFormValues({
       ...formValues,
-      telefoneinput: [...formValues.telefoneinput, '']
+      telefoneinput: [...formValues.telefoneinput, ''],
+      ddiinput:      [...formValues.ddiinput, '']
     });
   };
 
@@ -51,24 +59,93 @@ const App = () => {
       setShownumeros(shownumeros - 1);
       setFormValues({
         ...formValues,
-        telefoneinput: formValues.telefoneinput.slice(0, -1)
+        telefoneinput: formValues.telefoneinput.slice(0, -1),
+        ddiinput:      formValues.ddiinput.slice(0, -1)
       });
     }
   };
 
   const handleInputChange = (event) => {
+    if(event.target.name === 'cpf'){
+      // Validar o CPF e atualizar o estado cpfValido
+      const valido = cpf.isValid(event.target.value);
+      setCpfValido(valido);
+      if(valido){
+        event.target.value = cpf.format(event.target.value);
+      }
+    }
     setFormValues({
       ...formValues,
       [event.target.name]: event.target.value
     });
   };
 
+  // Função para cancelar a edição
+  const cancelEdit = () => {
+    setFormValues({
+      nome: '',
+      cpf: '',
+      telefoneinput: Array(shownumeros).fill(''),
+      ddiinput: Array(shownumeros).fill(''),
+    });
+    setEditItemId(null);
+    handleButtonClick(null); // Oculta todos os botões
+  };
+
+  // Função para preencher os campos do formulário ao editar
+  const handleEdit = async (id) => {
+    const itemToEdit = todos.find((item) => item.ID === id);
+    console.log(itemToEdit);
+    // se o item não for encontrado, retorna
+    if (!itemToEdit) {
+      return;
+    }
+    // telefoneinput será consultado pelo o axios e retornar um array, se ele for vazio tem que ser um array vazio
+    const telefoneinputArray = await axios.get(`http://localhost:8000/telefone/${itemToEdit.ID}`);
+    if (telefoneinputArray.data === '') {
+      telefoneinputArray.data = [];
+    }
+    // telefoneinput vou tranformar em um array simples do campo TELEFONE
+    const telefoneinputArraySimples = telefoneinputArray.data.map(telefone => telefone.TELEFONE);
+
+    const ddiinputArray = telefoneinputArray.data.map(telefone => telefone.COUNTRY_CODE);
+
+    // Preencher os campos do formulário com os valores do item a ser editado
+    setFormValues({
+      nome: itemToEdit.NOME,
+      cpf: itemToEdit.CPF,
+      telefoneinput: telefoneinputArraySimples,
+      ddiinput: ddiinputArray,
+    });
+    setEditItemId(id);
+    handleButtonClick('update-button'); // Mostra o botão de atualização
+  };
+
   const handleTelefoneChange = (index, value) => {
     const newTelefoneInput = [...formValues.telefoneinput];
     newTelefoneInput[index] = value;
+
+    // Verificar se ddiinput para este índice é vazio ou nulo
+    const valorDDIAtual = formValues.ddiinput[index];
+    const novoDDI = valorDDIAtual === '' || valorDDIAtual === null ? '1' : valorDDIAtual;
+
+    // Atualizar o valor de ddiinput no estado formValues
+    const novosDDIs = [...formValues.ddiinput];
+    novosDDIs[index] = novoDDI;
+
     setFormValues({
       ...formValues,
-      telefoneinput: newTelefoneInput
+      telefoneinput: newTelefoneInput,
+      ddiinput: novosDDIs,
+    });
+  };
+
+  const handleDDIChange = (index, value) => {
+    const newDDIInput = [...formValues.ddiinput];
+    newDDIInput[index] = value;
+    setFormValues({
+      ...formValues,
+      ddiinput:      newDDIInput
     });
   };
 
@@ -79,6 +156,45 @@ const App = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Verifica se submitButton é igual a addBtn, se for igual continue se não for encerre
+    if (submitButton !== 'addBtn') {
+      return;
+    }
+
+    // verifica se os campos estão vazios
+    if (formValues.nome === '' || formValues.cpf === '' || formValues.telefoneinput.some(telefone => telefone === '') || formValues.ddiinput.some(ddi => ddi === '')) {
+      toast.warn('Por favor, preencha todos os campos.', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
+        return;
+    }
+
+    // Se o CPF for válido, pode prosseguir com o envio do formulário
+    if (cpfValido) {
+      // Seu código de envio do formulário aqui
+      console.log('Formulário enviado!');
+    } else {
+      // Exibir toast de erro se o CPF for inválido
+      toast.warn('CPF inválido. Por favor, corrija o CPF.', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
+        return;
+    }
+
     try {
       // Crie um objeto com os dados que deseja enviar para a API
       const data = new FormData();
@@ -88,6 +204,11 @@ const App = () => {
       // Adicione os números de telefone ao FormData
       formValues.telefoneinput.forEach((telefone, index) => {
         data.append(`telefoneinput[${index}]`, telefone);
+      });
+
+      // Adiciona os ddi de telefone ao FormData
+      formValues.ddiinput.forEach((ddi, index) => {
+        data.append(`ddiinput[${index}]`, ddi);
       });
 
       // Faça a requisição para a API usando o Axios
@@ -105,11 +226,33 @@ const App = () => {
       // Atualize o estado 'todos' com os dados recebidos da API
       setTodos((prevTodos) => [...prevTodos, response.data]);
 
+      // Limpar os campos do formulário
+      setFormValues({
+        nome: '',
+        cpf: '',
+        telefoneinput: [''],
+        ddiinput: ['']
+      });
+
       // Lógica adicional se necessário
       console.log('Resposta da API:', response.data);
     } catch (error) {
       // Lógica de tratamento de erro
       console.error('Erro ao enviar requisição:', error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:8000/usuarios/${id}`);
+
+      setTodos((prevTodos) => prevTodos.filter(todo => todo.ID !== id));
+
+      // Lógica adicional se necessário
+      console.log('Item excluído com sucesso:', response.data);
+    } catch (error) {
+      // Lógica de tratamento de erro
+      console.error('Erro ao deletar item:', error);
     }
   };
 
@@ -142,17 +285,28 @@ const App = () => {
               id="addBtn"
               type="submit"
               onClick={() => handleButtonClick('addBtn')}
+              style={{ display: editItemId ? 'none' : 'inline' }}
               className="add"
             >
               Cadastrar
             </button>
             <button
-              type="button"
+              type="submit"
+              onClick={() => handleButtonClick('uptBtn')}
               className="add"
               id="update-button"
-              style={{ display: "none"}}
+              style={{ display: editItemId ? 'inline' : 'none' }}
             >
               Update
+            </button>
+            <button
+              type="button"
+              className="add"
+              id="cancel-edit-button"
+              style={{ display: editItemId ? 'inline' : 'none' }}
+              onClick={cancelEdit}
+            >
+              Cancelar Edição
             </button>
         </div>
 
@@ -165,17 +319,31 @@ const App = () => {
           value={formValues.nome}
           onChange={handleInputChange}
           />
-        <input
-          id="todoInputCpf"
-          type="text"
-          name="cpf"
-          placeholder="CPF..."
-          value={formValues.cpf}
-          onChange={handleInputChange}
-          />
+        <div style={{position: 'relative'}}>
+          <input
+            id="todoInputCpf"
+            type="text"
+            name="cpf"
+            placeholder="CPF..."
+            value={formValues.cpf}
+            onChange={handleInputChange}
+            />
+          {!cpfValido && <span style={{ 
+            color: '#b10000',     
+            'z-index': '1',
+            position: 'absolute',
+            top: '50px',
+            left: '14px',
+            'font-size': '12px',
+          }}>CPF inválido. Por favor, corrija o CPF.</span>}
+        </div>
           {formValues.telefoneinput.map((value, index) => (
             <div key={index} className='conjun'>
-              <SelectView chave={index} name={`ddiinput[${index}]`} />
+              <SelectView 
+                chave={index} 
+                name={`ddiinput[${index}]`} 
+                handleDDIChange={(novoDDI) => handleDDIChange(index, novoDDI)}
+              />
               <input
                 key={index}
                 type="text"
@@ -191,19 +359,31 @@ const App = () => {
       </form>
       <div className="todos">
         <ul className="todo-list">
-          {todos.map(({NOME, CPF, created_at}, index) => (  
+          {todos.map(({NOME, CPF, created_at, ID}, index) => (  
             <li className="li" key={index}> 
               <input className="form-check-input" type="checkbox" value="option1"/>
               <label className="form-check-label" htmlFor="inlineCheckbox1"></label>
               <span className="todo-text">{NOME}</span>
               <span className="todo-text">{CPF}</span>
               <span className="todo-text">Data de Criação: {format(parseISO(created_at), 'dd/MM/yyyy HH:mm')}</span>
-              <span className="span-button"><FontAwesomeIcon icon={faTrash} /></span>
-              <span className="span-button"><FontAwesomeIcon icon={faEdit} /></span>
+              <span className="span-button" onClick={() => handleDelete(ID)}><FontAwesomeIcon icon={faTrash} /></span>
+              <span className="span-button" onClick={() => handleEdit(ID)}><FontAwesomeIcon icon={faEdit} /></span>
             </li>
           ))}
         </ul>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        />
     </div>
   )
 }

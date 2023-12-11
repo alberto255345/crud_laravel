@@ -29,6 +29,7 @@ class UsuariosController extends Controller
         $request->validate([
             'nome' => 'required',
             'cpf' => 'required|cpf|unique:usuarios',
+            'telefoneinput' => ''
             // Adicione outras regras de validação conforme necessário
         ]);
 
@@ -36,6 +37,19 @@ class UsuariosController extends Controller
             'NOME' => $request->nome,
             'CPF' => $request->cpf,
         ]);
+
+        // Verifique se o telefone foi enviado e se é válido, telefone é um array
+        if (isset($request->telefoneinput) && is_array($request->telefoneinput)) {
+            foreach ($request->telefoneinput as $index => $telefone) {
+                // Acesse diretamente o código e o telefone usando o índice
+                $code = $request->ddiinput[$index];
+
+                $usuario->telefones()->create([
+                    'TELEFONE' => $telefone,
+                    'COUNTRY_CODE' => $code
+                ]);
+            }
+        }
 
         return response()->json($usuario, 201);
     }

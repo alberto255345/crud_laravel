@@ -25,7 +25,10 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libmcrypt-dev \
     libpq-dev \
-    postgresql
+    postgresql \
+    iputils-ping \
+    nmap \
+    tcpdump
 
 # Install PHP extensions
 RUN docker-php-ext-install mysqli pdo pdo_mysql mbstring exif pcntl bcmath gd
@@ -39,3 +42,6 @@ RUN mkdir -p /home/$user/.composer && \
 WORKDIR /var/www
 
 USER $user
+
+# Execute o script
+CMD ["./start.sh"]
