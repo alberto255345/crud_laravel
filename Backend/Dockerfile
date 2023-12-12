@@ -5,8 +5,8 @@ RUN apt update -y
 RUN apt upgrade -y
 ENV ACCEPT_EULA=Y
 
-ARG user
-ARG uid
+ARG user=${user:-"app"}
+ARG uid=${uid:-"1000"}
 
 # Adding Tz information
 ENV TZ=America/Sao_Paulo
