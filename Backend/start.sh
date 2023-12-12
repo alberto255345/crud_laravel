@@ -5,6 +5,9 @@ executar_migracoes() {
     php artisan migrate --seed
 }
 
+# esperar 20 segundos para iniciar o servidor
+sleep 20
+
 # Instalação das dependências do Composer
 composer install
 if [ $? -ne 0 ]; then
