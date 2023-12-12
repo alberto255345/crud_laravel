@@ -3,20 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Usuarios;
-use Illuminate\Support\Facades\DB;
+use App\Repositories\UsuariosRepositoryInterface;
 
 class UsuariosController extends Controller
 {
+    protected $usuarios;
+
+    public function __construct(UsuariosRepositoryInterface $usuarios)
+    {
+        $this->usuarios = $usuarios;
+    }
+
     public function index()
     {
-        $usuarios = DB::table('usuarios')
-        ->leftJoin('telefones', 'usuarios.ID', '=', 'telefones.USUARIO_ID')
-        ->leftJoin('pais', 'pais.ID', '=', 'telefones.COUNTRY_CODE')
-        ->select('usuarios.ID', 'usuarios.NOME', 'usuarios.CPF', DB::raw('GROUP_CONCAT(CONCAT(pais.NUMERO_PAIS, " ", telefones.TELEFONE)) as TELEFONE'), 'usuarios.created_at')
-        ->groupBy('usuarios.ID', 'usuarios.NOME', 'usuarios.CPF')
-        ->get();
-
+        $usuarios = $this->usuarios->getAllUsuarios();
         return response()->json($usuarios);
     }
 
@@ -29,44 +29,19 @@ class UsuariosController extends Controller
             // Adicione outras regras de validação conforme necessário
         ]);
 
-        $usuario = Usuarios::create([
-            'NOME' => $request->nome,
-            'CPF' => $request->cpf,
-        ]);
-
-        // Verifique se o telefone foi enviado e se é válido, telefone é um array
-        if (isset($request->telefoneinput) && is_array($request->telefoneinput)) {
-            foreach ($request->telefoneinput as $index => $telefone) {
-                // Acesse diretamente o código e o telefone usando o índice
-                $code = $request->ddiinput[$index];
-
-                $usuario->telefones()->create([
-                    'TELEFONE' => $telefone,
-                    'COUNTRY_CODE' => $code
-                ]);
-            }
-        }
-
-        $usuario = Usuarios::leftJoin('telefones', 'usuarios.ID', '=', 'telefones.USUARIO_ID')
-        ->leftJoin('pais', 'pais.ID', '=', 'telefones.COUNTRY_CODE')
-        ->select('usuarios.ID', 'usuarios.NOME', 'usuarios.CPF', DB::raw('GROUP_CONCAT(CONCAT(pais.NUMERO_PAIS, " ", telefones.TELEFONE)) as TELEFONE'), 'usuarios.created_at')
-        ->groupBy('usuarios.ID', 'usuarios.NOME', 'usuarios.CPF')
-        ->where('usuarios.ID', $usuario->ID)
-        ->first();
+        $usuario = $this->usuarios->store($request);
 
         return response()->json($usuario, 201);
     }
 
     public function destroy($id)
     {
-        $usuario = Usuarios::find($id);
+        $deleted = $this->usuarios->deleteUsuario($id);
 
-        if (!$usuario) {
+        if ($deleted) {
+            return response()->json(['message' => 'Usuário excluído com sucesso']);
+        } else {
             return response()->json(['message' => 'Usuário não encontrado'], 404);
         }
-
-        $usuario->delete();
-
-        return response()->json(['message' => 'Usuário excluído com sucesso']);
     }
 }
