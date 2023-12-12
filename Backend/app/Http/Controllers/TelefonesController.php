@@ -3,17 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Telefone;
+use App\Repositories\TelefoneRepositoryInterface;
 
 class TelefonesController extends Controller
 {
-    // Exibir um telefone específico
+    protected $telefoneRepository;
+
+    public function __construct(TelefoneRepositoryInterface $telefoneRepository)
+    {
+        $this->telefoneRepository = $telefoneRepository;
+    }
+
     public function show($id)
     {
-        // where com o USUARIO_ID
-        $telefone = Telefone::where('USUARIO_ID', $id)->get();
+        $telefone = $this->telefoneRepository->findTelefonesByUsuarioId($id);
 
-        if (!$telefone) {
+        if ($telefone->isEmpty()) {
             return response()->json(['message' => 'Telefone não encontrado'], 404);
         }
 

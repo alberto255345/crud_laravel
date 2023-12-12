@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Support\Facades\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -26,5 +28,17 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        // Se a exceção for uma NotFoundHttpException (rota não encontrada)
+        if ($exception instanceof NotFoundHttpException) {
+            return Response::json(['error' => 'Rota não encontrada'], 404);
+        }
+
+        // Resto da lógica padrão para outras exceções
+
+        return parent::render($request, $exception);
     }
 }
