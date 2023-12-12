@@ -41,6 +41,9 @@ RUN mkdir -p /home/$user/.composer && \
 
 WORKDIR /var/www
 
+# Install Composer globally (version 2.5.8)
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=2.5.8
+
 USER $user
 
 # Execute o script
