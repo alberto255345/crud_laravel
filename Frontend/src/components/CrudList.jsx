@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 
 const CrudList = ({ cruds, setcruds, editItemId, setEditItemId, formValues, setFormValues, setShownumeros, toast }) => {
-    const apiUrl = import.meta.env.APP_URL || 'http://localhost:8000/usuarios';
+    const apiUrl = import.meta.env.APP_URL || 'http://localhost:8000';
     // Este useEffect será chamado apenas quando 'cruds' mudar
     useEffect(() => {
     }, [cruds]); 

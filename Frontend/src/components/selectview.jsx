@@ -3,7 +3,7 @@ import axios from 'axios';
 
 function SelectView({ chave, name, handleDDIChange, select }) {
   const [paises, setPaises] = useState([]);
-  const apiUrl = import.meta.env.APP_URL || 'http://localhost:8000/usuarios';
+  const apiUrl = import.meta.env.APP_URL || 'http://localhost:8000';
 
   useEffect(() => {
     const fetchData = async () => {

@@ -8,7 +8,7 @@ import SelectView from './selectview.jsx';
 const CrudForm = ({ cruds, setCruds, shownumeros, setShownumeros, editItemId, setEditItemId, formValues, setFormValues  }) => {
     const [cpfValido, setCpfValido] = useState(true);
     const [submitButton, setSubmitButton] = useState(null);
-    const apiUrl = import.meta.env.APP_URL || 'http://localhost:8000/usuarios';
+    const apiUrl = import.meta.env.APP_URL || 'http://localhost:8000';
     
 
     // Função para especificar qual butão foi clicado
