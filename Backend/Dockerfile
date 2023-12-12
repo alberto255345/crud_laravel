@@ -43,8 +43,5 @@ WORKDIR /var/www
 
 USER $user
 
-# Instale as dependências do Composer
-RUN composer install
-
 # Execute o script
 CMD ["./start.sh"]
