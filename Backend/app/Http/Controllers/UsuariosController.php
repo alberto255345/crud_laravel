@@ -29,7 +29,7 @@ class UsuariosController extends Controller
             // Adicione outras regras de validação conforme necessário
         ]);
 
-        $usuario = $this->usuarios->store($request);
+        $usuario = $this->usuarios->createUsuario($request);
 
         return response()->json($usuario, 201);
     }
