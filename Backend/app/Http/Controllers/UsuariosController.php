@@ -26,7 +26,6 @@ class UsuariosController extends Controller
             'nome' => 'required',
             'cpf' => 'required|cpf|unique:usuarios',
             'telefoneinput' => ''
-            // Adicione outras regras de validação conforme necessário
         ]);
 
         $usuario = $this->usuarios->createUsuario($request);

@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
-import { format, parseISO } from 'date-fns';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 import { cpf } from 'cpf-cnpj-validator';
 import { ToastContainer, toast } from 'react-toastify';
