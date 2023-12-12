@@ -14,12 +14,13 @@ const App = () => {
     cpf: '',
     telefoneinput: Array(shownumeros).fill(''),
     ddiinput: Array(shownumeros).fill(''),
-});
+  });
+  const apiUrl = import.meta.env.APP_URL || 'http://localhost:8000/usuarios';
   
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/usuarios');
+        const response = await axios.get(apiUrl);
         setcruds(response.data);
       } catch (error) {
         console.error('Erro ao buscar dados dos países:', error);

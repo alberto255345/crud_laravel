@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from 'axios';
 
 const CrudList = ({ cruds, setcruds, editItemId, setEditItemId, formValues, setFormValues, setShownumeros, toast }) => {
+    const apiUrl = import.meta.env.APP_URL || 'http://localhost:8000/usuarios';
     // Este useEffect será chamado apenas quando 'cruds' mudar
     useEffect(() => {
     }, [cruds]); 
@@ -12,7 +13,7 @@ const CrudList = ({ cruds, setcruds, editItemId, setEditItemId, formValues, setF
     // Função para deletar o item selecionado, passando o ID como parâmetro.
     const handleDelete = async (id) => {
         try {
-          const response = await axios.delete(`http://localhost:8000/usuarios/${id}`);
+          const response = await axios.delete(`${apiUrl}/usuarios/${id}`);
     
           setcruds((prevcruds) => prevcruds.filter(crud => crud.ID !== id));
     
@@ -41,7 +42,7 @@ const CrudList = ({ cruds, setcruds, editItemId, setEditItemId, formValues, setF
           return;
         }
         // telefoneinput será consultado pelo o axios e retornar um array, se ele for vazio tem que ser um array vazio
-        const telefoneinputArray = await axios.get(`http://localhost:8000/telefone/${itemToEdit.ID}`);
+        const telefoneinputArray = await axios.get(`${apiUrl}/telefone/${itemToEdit.ID}`);
         if (telefoneinputArray.data === '') {
           telefoneinputArray.data = [];
         }

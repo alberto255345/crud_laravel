@@ -8,6 +8,7 @@ import SelectView from './selectview.jsx';
 const CrudForm = ({ cruds, setCruds, shownumeros, setShownumeros, editItemId, setEditItemId, formValues, setFormValues  }) => {
     const [cpfValido, setCpfValido] = useState(true);
     const [submitButton, setSubmitButton] = useState(null);
+    const apiUrl = import.meta.env.APP_URL || 'http://localhost:8000/usuarios';
     
 
     // Função para especificar qual butão foi clicado
@@ -133,7 +134,7 @@ const CrudForm = ({ cruds, setCruds, shownumeros, setShownumeros, editItemId, se
         // se sumbitButton for igual a uptBtn, irá deletar os dados
         if (submitButton === 'uptBtn') {
             try {
-                const response_delete = await axios.delete(`http://localhost:8000/usuarios/${editItemId}`);
+                const response_delete = await axios.delete(`${apiUrl}/usuarios/${editItemId}`);
                 setCruds((prevcruds) => prevcruds.filter(crud => crud.ID !== editItemId));
             } catch (error) {
                 console.error('Erro ao deletar', error);
@@ -198,7 +199,7 @@ const CrudForm = ({ cruds, setCruds, shownumeros, setShownumeros, editItemId, se
             });
 
             // Faça a requisição para a API usando o Axios
-            const response = await axios.post('http://localhost:8000/usuarios', data, {
+            const response = await axios.post(`${apiUrl}/usuarios`, data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
