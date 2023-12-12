@@ -7,6 +7,8 @@ use App\Repositories\UsuariosRepositoryInterface;
 use App\Repositories\UsuariosRepository;
 use App\Repositories\TelefoneRepositoryInterface;
 use App\Repositories\TelefoneRepository;
+use App\Repositories\PaisRepositoryInterface;
+use App\Repositories\PaisRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(UsuariosRepositoryInterface::class, UsuariosRepository::class);
         $this->app->bind(TelefoneRepositoryInterface::class, TelefoneRepository::class);
+        $this->app->bind(PaisRepositoryInterface::class, PaisRepository::class);
     }
 
     /**
