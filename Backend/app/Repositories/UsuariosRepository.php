@@ -33,6 +33,19 @@ class UsuariosRepository implements UsuariosRepositoryInterface
         return $usuario;
     }
 
+    public function getUsuarioByCpf($cpf)
+    {
+        $usuario = Usuarios::where('CPF', $cpf)->first();
+
+        // Verifica se o usuário existe
+        if (!$usuario) {
+            return false;
+        }else{
+            return true;
+        }
+
+    }
+
     public function createUsuario(Request $request)
     {
         // A validação deve ocorrer no nível do Controller

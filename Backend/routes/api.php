@@ -20,6 +20,7 @@ Route::get('/', function(){
 })->name('index');
 
 Route::get('/usuarios', 'UsuariosController@index')->name('index.usuarios');
+Route::get('/usuarios/{cpf}', 'UsuariosController@validcpf')->name('validcpf.usuarios');
 Route::post('/usuarios', 'UsuariosController@store')->name('store.usuarios');
 Route::delete('/usuarios/{id}', 'UsuariosController@destroy')->name('destroy.usuarios');
 Route::get('/pais', 'PaisController@index')->name('index.pais');

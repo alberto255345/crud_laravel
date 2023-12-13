@@ -8,6 +8,7 @@ interface UsuariosRepositoryInterface
 {
     public function getAllUsuarios();
     public function getUsuarioById($id);
+    public function getUsuarioByCpf($cpf);
     public function createUsuario(Request $request);
     public function deleteUsuario($id);
 }

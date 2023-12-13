@@ -182,6 +182,22 @@ const CrudForm = ({ cruds, setCruds, shownumeros, setShownumeros, editItemId, se
             return;
         }
 
+        // se o CPF já existir, exibir toast de erro
+        const cpfExiste = await axios.get(`${apiUrl}/usuarios/${formValues.cpf}`);
+        if (cpfExiste.data.success == false) {
+            toast.warn('CPF já existe. Por favor, corrija o CPF.', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
+        }
+
         try {
             // Crie um objeto com os dados que deseja enviar para a API
             const data = new FormData();
@@ -206,8 +222,9 @@ const CrudForm = ({ cruds, setCruds, shownumeros, setShownumeros, editItemId, se
             });
 
             if (response.data && response.data.errors) {
-                const errorMessage = response.data.errors.cpf[0] || 'Erro desconhecido';
-                setErrorPopup(errorMessage);
+                // Exibir mensagem de erro se houver algum erro na resposta da API
+                console.log(response.data.message);
+                return;
             }
 
             // Atualize o estado 'cruds' com os dados recebidos da API
@@ -244,8 +261,8 @@ const CrudForm = ({ cruds, setCruds, shownumeros, setShownumeros, editItemId, se
         setFormValues({
             nome: '',
             cpf: '',
-            telefoneinput: Array(shownumeros).fill(''),
-            ddiinput: Array(shownumeros).fill(''),
+            telefoneinput: [''],
+            ddiinput: ['']
         });
         setEditItemId(null);
         setShownumeros(1);
