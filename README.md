@@ -27,7 +27,7 @@ docker-compose up -d --build
 
 To read from the database, it is necessary for the backend to have a ``.env`` file in its folder.
 
-### Diagram do DB
+### DB Diagram
 
 For more details, click on the image.   
 [![Alt text](image.png)](https://dbdiagram.io/d/CIA-SImples-65727a8656d8064ca09e7e36)
